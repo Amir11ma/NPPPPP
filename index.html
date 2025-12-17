@@ -1,100 +1,211 @@
-<!DOCTYPE html>
-<html lang="fa">
+<!DOCTYPE html><html lang="fa">
 <head>
 <meta charset="UTF-8">
-<title>چت‌بات کلش آو کلنز</title>
+<title>امتحانیو - نسخه موبایل و فارسی</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-    body {
-        direction: rtl;
-        font-family: sans-serif;
-        background: #0d0d0d;
-        color: #fff;
-        padding: 20px;
-    }
-    #box {
-        background: #1a1a1a;
-        padding: 20px;
-        border-radius: 15px;
-        max-width: 500px;
-        margin: auto;
-        box-shadow: 0 0 20px #00c3ff;
-    }
-    input {
-        width: 90%;
-        padding: 12px;
-        border-radius: 10px;
-        border: none;
-        outline: none;
-        margin-top: 10px;
-        font-size: 17px;
-    }
-    button {
-        padding: 10px 25px;
-        background: #00aaff;
-        border: none;
-        border-radius: 10px;
-        color: #000;
-        font-size: 16px;
-        margin-top: 10px;
-        cursor: pointer;
-    }
-    #answer {
-        margin-top: 20px;
-        font-size: 18px;
-        line-height: 27px;
-        background: #111;
-        padding: 15px;
-        border-radius: 10px;
-    }
+body {font-family: Tahoma, sans-serif; background: linear-gradient(135deg,#ffe29f,#ff7e5f); margin:0; color:#333; direction: rtl;}
+.box {max-width:500px;margin:20px auto;background:#fff;padding:25px;border-radius:15px;box-shadow:0 12px 25px rgba(0,0,0,0.25);}
+button,input,textarea {width:100%;padding:14px;font-size:17px;margin-top:12px;border-radius:10px;border:1px solid #ccc;}
+button {background: linear-gradient(45deg,#ff512f,#dd2476); color:#fff; border:none; cursor:pointer; transition: transform 0.15s, box-shadow 0.15s; font-weight:bold;}
+button:hover { transform: scale(1.05); box-shadow:0 10px 25px rgba(0,0,0,0.3); }
+.hidden{display:none;}
+.timer{background:#222;color:#fff;text-align:center;padding:14px;border-radius:12px;font-weight:bold;font-size:22px; box-shadow:0 4px 12px rgba(0,0,0,0.2);}
+.question{background:#e0f7fa; padding:18px; margin-top:18px; border-radius:15px; box-shadow:0 6px 15px rgba(0,0,0,0.15);}
+label{display:block;margin-top:8px; cursor:pointer;}
+textarea{resize:none;}
+p.footer{margin-top:25px;text-align:center;color:#666;font-size:14px;}
 </style>
 </head>
-<body>
+<body><div class="box" id="roleBox">
+<h2>امتحانیو - نقش خود را انتخاب کنید</h2>
+<button onclick="selectRole('student')">دانش‌آموز</button>
+<button onclick="selectRole('teacher')">استاد</button>
+</div><div class="box hidden" id="studentBox">
+<h2>ورود دانش‌آموز</h2>
+<input id="stuUser" placeholder="نام کاربری">
+<input id="stuPass" type="password" placeholder="رمز عبور">
+<input id="examCode" placeholder="کد امتحان">
+<button onclick="studentLogin()">ورود به امتحان</button>
+</div><div class="box hidden" id="teacherBox">
+<h2>ثبت‌نام / ورود استاد</h2>
+<input id="teachUser" placeholder="نام کاربری">
+<input id="teachPass" type="password" placeholder="رمز عبور">
+<button onclick="teacherRegister()">ثبت‌نام</button>
+<button onclick="teacherLogin()">ورود</button>
+</div><div class="box hidden" id="teacherPanel">
+<h2>پنل استاد</h2>
+<input id="newExamCode" placeholder="کد امتحان جدید">
+<input id="examTime" placeholder="مدت زمان (دقیقه)">
+<div id="questionsBox"></div>
+<button onclick="addQuestion()">افزودن سوال</button>
+<button onclick="createExam()">ایجاد امتحان</button>
+<h3>نتایج</h3>
+<div id="teacherResults"></div>
+</div><div class="box hidden" id="examBox">
+<div class="timer" id="timer"></div>
+<div id="questions"></div>
+<button onclick="finishExam()">پایان امتحان</button>
+</div><div class="box hidden" id="resultBox">
+<h2>نتیجه شما</h2>
+<p id="scoreText"></p>
+</div><p class="footer">ساخته شده توسط BGM STUDIO</p><script>
+let currentUser=null;
+let currentExam=null;
+let timeLeft=0;
+let timer;
+let questionsList=[];
 
-<div id="box">
-    <h2>🤖 دستیار کلش آو کلنز</h2>
-    <input id="ask" placeholder="سوالی داری؟ (مثلاً: تان هال ۱۵)">
-    <button onclick="reply()">ارسال</button>
-    <div id="answer">منتظر سوال شما هستم...</div>
-</div>
-
-<script>
-let answers = {};
-
-async function loadJSON() {
-    try {
-        const res = await fetch("ind.json");
-        answers = await res.json();
-    } catch (e) {
-        document.getElementById("answer").innerHTML = "❌ خطا در خواندن فایل ind.json";
-    }
+function selectRole(role){
+  document.getElementById('roleBox').classList.add('hidden');
+  if(role==='student') document.getElementById('studentBox').classList.remove('hidden');
+  if(role==='teacher') document.getElementById('teacherBox').classList.remove('hidden');
 }
 
-function reply() {
-    let q = document.getElementById("ask").value.trim().toLowerCase();
-    let ans = document.getElementById("answer");
-
-    // احوال‌پرسی
-    if (q.includes("سلام") || q.includes("چطوری") || q.includes("خوبی")) {
-        ans.innerHTML = "سلام رفیق کلشی! 😊 چه کمکی ازم برمیاد؟";
-        return;
-    }
-
-    // جستجوی کلیدهای شبیه
-    let found = false;
-    for (let key in answers) {
-        if (q.includes(key)) {
-            ans.innerHTML = answers[key];
-            found = true;
-            break;
-        }
-    }
-
-    if (!found) ans.innerHTML = "متوجه نشدم چی گفتی 😅 دقیق‌تر بپرس یا نام تان‌هال رو بگو.";
+// ===== Teacher =====
+function teacherRegister(){
+  const u=document.getElementById('teachUser').value.trim();
+  const p=document.getElementById('teachPass').value.trim();
+  if(!u||!p) return alert('نام کاربری و رمز را وارد کنید');
+  let teachers=JSON.parse(localStorage.getItem('teachers')||'{}');
+  if(teachers[u]) return alert('نام کاربری موجود است');
+  teachers[u]={password:p,exams:{}};
+  localStorage.setItem('teachers',JSON.stringify(teachers));
+  alert('استاد ثبت شد');
 }
 
-// بارگذاری فایل JSON
-loadJSON();
-</script>
+function teacherLogin(){
+  const u=document.getElementById('teachUser').value.trim();
+  const p=document.getElementById('teachPass').value.trim();
+  let teachers=JSON.parse(localStorage.getItem('teachers')||'{}');
+  if(!teachers[u]||teachers[u].password!==p) return alert('نام کاربری یا رمز اشتباه است');
+  currentUser={role:'teacher',username:u};
+  document.getElementById('teacherBox').classList.add('hidden');
+  document.getElementById('teacherPanel').classList.remove('hidden');
+  loadResults();
+}
 
-</body>
-</html>
+function addQuestion(){
+  const qText=prompt('متن سوال را وارد کنید:');
+  if(!qText) return;
+  const opts=[];
+  for(let i=0;i<4;i++){
+    const o=prompt(`گزینه ${i+1} را وارد کنید:`);
+    if(o) opts.push(o);
+  }
+  const correct=parseInt(prompt('شماره گزینه صحیح (1-4)'))-1;
+  const score=parseFloat(prompt('نمره سوال')); 
+  questionsList.push({text:qText,options:opts,correct:correct,score:score});
+  renderQuestionsPanel();
+}
+
+function renderQuestionsPanel(){
+  const box=document.getElementById('questionsBox');
+  box.innerHTML='';
+  questionsList.forEach((q,i)=>{
+    box.innerHTML+=`<p>${i+1}. ${q.text} (نمره: ${q.score})</p>`;
+  });
+}
+
+function createExam(){
+  const code=document.getElementById('newExamCode').value.trim();
+  const time=parseInt(document.getElementById('examTime').value.trim());
+  if(!code||!time||questionsList.length===0) return alert('همه موارد را وارد کنید');
+  let teachers=JSON.parse(localStorage.getItem('teachers')||'{}');
+  if(teachers[currentUser.username].exams[code]){
+    return alert('این کد امتحان از قبل ایجاد شده.');
+  }
+  teachers[currentUser.username].exams[code]={time:time,questions:questionsList};
+  localStorage.setItem('teachers',JSON.stringify(teachers));
+  questionsList=[];
+  document.getElementById('questionsBox').innerHTML='';
+  alert(`امتحان ایجاد شد با کد: ${code}. مدت زمان: ${time} دقیقه.`);
+  loadResults();
+}
+
+function loadResults(){
+  let answers=JSON.parse(localStorage.getItem('answers')||'{}');
+  let teachers=JSON.parse(localStorage.getItem('teachers')||'{}');
+  let html='';
+  let myExams = teachers[currentUser.username].exams;
+  for(let exam in myExams){
+      if(answers[exam]){
+          for(let stu in answers[exam]){
+              html+=`<p>امتحان: ${exam}, دانش‌آموز: ${stu}, نمره: ${answers[exam][stu].score}</p>`;
+          }
+      }
+  }
+  document.getElementById('teacherResults').innerHTML=html;
+}
+
+// ===== Student =====
+function studentLogin(){
+  const u=document.getElementById('stuUser').value.trim();
+  const p=document.getElementById('stuPass').value.trim();
+  const code=document.getElementById('examCode').value.trim();
+  if(!u||!p||!code) return alert('همه موارد را وارد کنید');
+  currentUser={role:'student',username:u,password:p};
+  currentExam=code;
+  let teachers=JSON.parse(localStorage.getItem('teachers')||'{}');
+  let exam=null;
+  for(let t in teachers){
+    if(teachers[t].exams[code]){exam=teachers[t].exams[code]; break;}
+  }
+  if(!exam) return alert('کد امتحان یافت نشد');
+
+  let answers=JSON.parse(localStorage.getItem('answers')||'{}');
+  if(answers[code] && answers[code][u]){
+      return alert('شما قبلاً این امتحان را داده‌اید.');
+  }
+
+  startExam(exam);
+}
+
+function startExam(examData){
+  document.getElementById('studentBox').classList.add('hidden');
+  document.getElementById('examBox').classList.remove('hidden');
+  renderQuestions(examData.questions);
+  timeLeft=examData.time*60;
+  timer=setInterval(()=>{
+    let m=Math.floor(timeLeft/60),s=timeLeft%60;
+    document.getElementById('timer').innerText=`زمان باقی مانده: ${m}:${s<10?'0':''}${s}`;
+    if(timeLeft<=30) document.getElementById('timer').style.background='#ff5555';
+    timeLeft--;
+    if(timeLeft<0){clearInterval(timer); finishExam(examData.questions.length);}
+  },1000);
+}
+
+function renderQuestions(questions){
+  const box=document.getElementById('questions');
+  box.innerHTML='';
+  questions.forEach((q,i)=>{
+    let html=`<div class='question'><p>${i+1}. ${q.text}</p>`;
+    q.options.forEach((o,idx)=>{
+      html+=`<label><input type='radio' name='q${i}' value='${idx}'> ${o}</label>`;
+    });
+    html+='</div>';
+    box.innerHTML+=html;
+  });
+}
+
+function finishExam(){
+  clearInterval(timer);
+  let score=0;
+  let teachers=JSON.parse(localStorage.getItem('teachers')||'{}');
+  let questions=null;
+  for(let t in teachers){if(teachers[t].exams[currentExam]){questions=teachers[t].exams[currentExam].questions; break;}}
+  if(!questions) return alert('خطا در بارگذاری سوالات');
+  questions.forEach((q,i)=>{
+    const ans=document.querySelector(`input[name='q${i}']:checked`);
+    if(ans && Number(ans.value)===q.correct) score += q.score;
+  });
+  let answers=JSON.parse(localStorage.getItem('answers')||'{}');
+  if(!answers[currentExam]) answers[currentExam]={};
+  answers[currentExam][currentUser.username]={score:score};
+  localStorage.setItem('answers',JSON.stringify(answers));
+  document.getElementById('examBox').classList.add('hidden');
+  document.getElementById('resultBox').classList.remove('hidden');
+  document.getElementById('scoreText').innerText=`نمره شما: ${score}`;
+}
+</script></body>
+    </html>
