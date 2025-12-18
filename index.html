@@ -1,211 +1,237 @@
-<!DOCTYPE html><html lang="fa">
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<title>امتحانیو - نسخه موبایل و فارسی</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>وضعیت آب و هوا ایران </title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.min.css">
+
 <style>
-body {font-family: Tahoma, sans-serif; background: linear-gradient(135deg,#ffe29f,#ff7e5f); margin:0; color:#333; direction: rtl;}
-.box {max-width:500px;margin:20px auto;background:#fff;padding:25px;border-radius:15px;box-shadow:0 12px 25px rgba(0,0,0,0.25);}
-button,input,textarea {width:100%;padding:14px;font-size:17px;margin-top:12px;border-radius:10px;border:1px solid #ccc;}
-button {background: linear-gradient(45deg,#ff512f,#dd2476); color:#fff; border:none; cursor:pointer; transition: transform 0.15s, box-shadow 0.15s; font-weight:bold;}
-button:hover { transform: scale(1.05); box-shadow:0 10px 25px rgba(0,0,0,0.3); }
-.hidden{display:none;}
-.timer{background:#222;color:#fff;text-align:center;padding:14px;border-radius:12px;font-weight:bold;font-size:22px; box-shadow:0 4px 12px rgba(0,0,0,0.2);}
-.question{background:#e0f7fa; padding:18px; margin-top:18px; border-radius:15px; box-shadow:0 6px 15px rgba(0,0,0,0.15);}
-label{display:block;margin-top:8px; cursor:pointer;}
-textarea{resize:none;}
-p.footer{margin-top:25px;text-align:center;color:#666;font-size:14px;}
+  :root{
+    --bg:#f4f8fc;
+    --card:#ffffff;
+    --muted:#6b7785;
+    --accent:#ff9800;
+    --accent-600:#fb8c00;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family: Vazirmatn, "Tahoma", sans-serif;background:var(--bg);color:#0b1a2b;-webkit-font-smoothing:antialiased}
+  header{
+    background: linear-gradient(90deg,var(--accent),#ffb74d);
+    color:#fff;padding:18px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,.12);
+    position: sticky; top: 0; z-index: 40;
+  }
+  header .title{font-size:18px;font-weight:700;margin:0}
+  header .subtitle{font-size:13px;opacity:.95}
+  main{max-width:980px;margin:14px auto;padding:14px}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+  .btn{
+    background:var(--accent);color:#fff;border:0;padding:9px 12px;border-radius:10px;font-weight:600;cursor:pointer;
+    box-shadow: 0 6px 14px rgba(0,0,0,.08);
+  }
+  .btn.ghost{background:transparent;color:var(--accent);border:1px solid rgba(0,0,0,.06);box-shadow:none}
+  .select, .search{
+    background:var(--card);border-radius:10px;padding:6px 8px;border:1px solid #e9eef6;min-width:120px;
+  }
+  .search input{border:0;outline:none;padding:8px;width:220px;background:transparent;font-size:14px}
+  .row{
+    display:grid;grid-template-columns:1fr 280px;gap:14px;
+  }
+  .list{display:grid;gap:12px}
+  .card{
+    background:var(--card);border-radius:var(--radius);padding:12px;display:flex;align-items:center;gap:12px;
+    box-shadow: 0 6px 18px rgba(12,30,60,.04);
+  }
+  .card .left{flex:1}
+  .city{font-size:16px;font-weight:700;margin-bottom:4px}
+  .meta{font-size:13px;color:var(--muted)}
+  .aqi{
+    min-width:84px;text-align:center;border-radius:10px;padding:10px 8px;background:linear-gradient(180deg,#f6f8fb,#ffffff);
+    box-shadow: inset 0 -6px 18px rgba(0,0,0,.02);
+  }
+  .aqi .val{font-size:20px;font-weight:800}
+  .aqi .emoji{font-size:24px;margin-top:6px;display:block;animation: float 2s infinite ease-in-out}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  .change{font-size:13px;color:var(--muted);margin-top:6px}
+  .panel{
+    background:linear-gradient(180deg,#fff,#fbfdff);border-radius:12px;padding:12px;box-shadow:0 6px 20px rgba(20,30,60,.04);
+    height:100%;
+  }
+  .stat{display:flex;justify-content:space-between;align-items:center;padding:8px 6px}
+  .stat .label{color:var(--muted);font-size:13px}
+  .stat .value{font-weight:700;font-size:15px}
+  @media (max-width:900px){
+    .row{grid-template-columns:1fr; }
+    .controls{justify-content:space-between}
+    .search input{width:140px}
+  }
+  @media (max-width:600px){
+    .search input{width:100px}
+    header .title{font-size:16px}
+    .aqi{min-width:72px;padding:8px}
+  }
+  .loader{width:36px;height:36px;border-radius:50%;border:4px solid rgba(255,255,255,.16);border-top-color:rgba(255,255,255,.9);animation:spin 0.9s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  footer{text-align:center;padding:10px 0;color:var(--muted);font-size:13px}
 </style>
 </head>
-<body><div class="box" id="roleBox">
-<h2>امتحانیو - نقش خود را انتخاب کنید</h2>
-<button onclick="selectRole('student')">دانش‌آموز</button>
-<button onclick="selectRole('teacher')">استاد</button>
-</div><div class="box hidden" id="studentBox">
-<h2>ورود دانش‌آموز</h2>
-<input id="stuUser" placeholder="نام کاربری">
-<input id="stuPass" type="password" placeholder="رمز عبور">
-<input id="examCode" placeholder="کد امتحان">
-<button onclick="studentLogin()">ورود به امتحان</button>
-</div><div class="box hidden" id="teacherBox">
-<h2>ثبت‌نام / ورود استاد</h2>
-<input id="teachUser" placeholder="نام کاربری">
-<input id="teachPass" type="password" placeholder="رمز عبور">
-<button onclick="teacherRegister()">ثبت‌نام</button>
-<button onclick="teacherLogin()">ورود</button>
-</div><div class="box hidden" id="teacherPanel">
-<h2>پنل استاد</h2>
-<input id="newExamCode" placeholder="کد امتحان جدید">
-<input id="examTime" placeholder="مدت زمان (دقیقه)">
-<div id="questionsBox"></div>
-<button onclick="addQuestion()">افزودن سوال</button>
-<button onclick="createExam()">ایجاد امتحان</button>
-<h3>نتایج</h3>
-<div id="teacherResults"></div>
-</div><div class="box hidden" id="examBox">
-<div class="timer" id="timer"></div>
-<div id="questions"></div>
-<button onclick="finishExam()">پایان امتحان</button>
-</div><div class="box hidden" id="resultBox">
-<h2>نتیجه شما</h2>
-<p id="scoreText"></p>
-</div><p class="footer">ساخته شده توسط BGM STUDIO</p><script>
-let currentUser=null;
-let currentExam=null;
-let timeLeft=0;
-let timer;
-let questionsList=[];
+<body>
+<header>
+  <div>
+    <div class="title">🌍 وضعیت آب و هوا و دما ایران</div>
+    <div class="subtitle">آپدیت خودکار: هر <span id="uiInterval">60</span> ثانیه</div>
+  </div>
+  <div id="installRow">
+    <a href="https://eitaa.com/BGM_STUDIO" target="_blank" class="btn">کانال ما</a>
+  </div>
+</header>
 
-function selectRole(role){
-  document.getElementById('roleBox').classList.add('hidden');
-  if(role==='student') document.getElementById('studentBox').classList.remove('hidden');
-  if(role==='teacher') document.getElementById('teacherBox').classList.remove('hidden');
+<main>
+  <div class="row">
+    <div>
+      <div class="controls">
+        <div class="select">
+          <select id="refresh" style="border:0;background:transparent;font-weight:700">
+            <option value="60">آپدیت: 60 ثانیه</option>
+            <option value="30">آپدیت: 30 ثانیه</option>
+            <option value="120">آپدیت: 120 ثانیه</option>
+          </select>
+        </div>
+        <div class="search">
+          <input id="search" placeholder="جستجوی شهر..." />
+        </div>
+        <button class="btn ghost" id="manualRefresh">به‌روزرسانی</button>
+      </div>
+      <div class="list card-container" id="listContainer"></div>
+    </div>
+
+    <aside class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-weight:700">خلاصه کشور</div>
+        <div style="font-size:12px;color:var(--muted)">آخرین بروزرسانی: <span id="lastTime">—</span></div>
+      </div>
+      <div class="stat"><div class="label">میانگین دما</div><div class="value" id="avg">—</div></div>
+      <div class="stat"><div class="label">شهرها</div><div class="value" id="cityCount">—</div></div>
+    </aside>
+  </div>
+</main>
+
+<footer>ساخته شده توسط BGM STUDIO</footer>
+
+<script>
+const cities = {
+  "تهران":[35.6892,51.3890],
+  "مشهد":[36.2605,59.6168],
+  "اصفهان":[32.6546,51.6680],
+  "شیراز":[29.5918,52.5837],
+  "تبریز":[38.0962,46.2738],
+  "کرج":[35.8400,51.0000],
+  "قم":[34.6401,50.8764],
+  "اهواز":[31.3183,48.6706],
+  "کرمان":[30.2839,57.0834],
+  "یزد":[31.8974,54.3569],
+  "سمنان":[35.5753,53.3958],
+  "رشت":[37.2808,49.5832],
+  "ارومیه":[37.5483,45.0672],
+  "اردبیل":[38.2498,48.2933],
+  "زاهدان":[29.4963,60.8629],
+  "بندرعباس":[27.1865,56.2808]
+};
+
+let refreshSec = Number(document.getElementById('refresh').value) || 60;
+let timer = null;
+const listContainer = document.getElementById('listContainer');
+let previous = {};
+const apiBase = "https://api.open-meteo.com/v1/forecast";
+
+/* تعیین آیکون هوشمند */
+function weatherEmoji(temp){
+  if(temp<=0) return "❄️";
+  if(temp<=10) return "🌬️";
+  if(temp<=20) return "☁️";
+  if(temp<=30) return "🌤️";
+  return "🌞";
 }
 
-// ===== Teacher =====
-function teacherRegister(){
-  const u=document.getElementById('teachUser').value.trim();
-  const p=document.getElementById('teachPass').value.trim();
-  if(!u||!p) return alert('نام کاربری و رمز را وارد کنید');
-  let teachers=JSON.parse(localStorage.getItem('teachers')||'{}');
-  if(teachers[u]) return alert('نام کاربری موجود است');
-  teachers[u]={password:p,exams:{}};
-  localStorage.setItem('teachers',JSON.stringify(teachers));
-  alert('استاد ثبت شد');
+function makeCard(name,temp){
+  const card = document.createElement('div');
+  card.className='card';
+  const left=document.createElement('div');
+  left.className='left';
+  const city=document.createElement('div');
+  city.className='city';
+  city.innerText=name;
+  const meta=document.createElement('div');
+  meta.className='meta';
+  meta.innerText='مختصات: '+(cities[name]?cities[name].join(', '):'—');
+  left.appendChild(city);
+  left.appendChild(meta);
+  const box=document.createElement('div');
+  box.className='aqi';
+  const val=document.createElement('div');
+  val.className='val';
+  val.innerText=temp===null?'نامعتبر':temp+'°C';
+  const emoji=document.createElement('div');
+  emoji.className='emoji';
+  emoji.innerText=weatherEmoji(temp);
+  box.appendChild(val);
+  box.appendChild(emoji);
+  card.appendChild(left);
+  card.appendChild(box);
+  return card;
 }
 
-function teacherLogin(){
-  const u=document.getElementById('teachUser').value.trim();
-  const p=document.getElementById('teachPass').value.trim();
-  let teachers=JSON.parse(localStorage.getItem('teachers')||'{}');
-  if(!teachers[u]||teachers[u].password!==p) return alert('نام کاربری یا رمز اشتباه است');
-  currentUser={role:'teacher',username:u};
-  document.getElementById('teacherBox').classList.add('hidden');
-  document.getElementById('teacherPanel').classList.remove('hidden');
-  loadResults();
+async function fetchTemp(lat,lon){
+  try{
+    const res = await fetch(`${apiBase}?latitude=${lat}&longitude=${lon}&current_weather=true`);
+    const j = await res.json();
+    return j?.current_weather?.temperature ?? null;
+  }catch(e){return null;}
 }
 
-function addQuestion(){
-  const qText=prompt('متن سوال را وارد کنید:');
-  if(!qText) return;
-  const opts=[];
-  for(let i=0;i<4;i++){
-    const o=prompt(`گزینه ${i+1} را وارد کنید:`);
-    if(o) opts.push(o);
-  }
-  const correct=parseInt(prompt('شماره گزینه صحیح (1-4)'))-1;
-  const score=parseFloat(prompt('نمره سوال')); 
-  questionsList.push({text:qText,options:opts,correct:correct,score:score});
-  renderQuestionsPanel();
-}
-
-function renderQuestionsPanel(){
-  const box=document.getElementById('questionsBox');
-  box.innerHTML='';
-  questionsList.forEach((q,i)=>{
-    box.innerHTML+=`<p>${i+1}. ${q.text} (نمره: ${q.score})</p>`;
-  });
-}
-
-function createExam(){
-  const code=document.getElementById('newExamCode').value.trim();
-  const time=parseInt(document.getElementById('examTime').value.trim());
-  if(!code||!time||questionsList.length===0) return alert('همه موارد را وارد کنید');
-  let teachers=JSON.parse(localStorage.getItem('teachers')||'{}');
-  if(teachers[currentUser.username].exams[code]){
-    return alert('این کد امتحان از قبل ایجاد شده.');
-  }
-  teachers[currentUser.username].exams[code]={time:time,questions:questionsList};
-  localStorage.setItem('teachers',JSON.stringify(teachers));
-  questionsList=[];
-  document.getElementById('questionsBox').innerHTML='';
-  alert(`امتحان ایجاد شد با کد: ${code}. مدت زمان: ${time} دقیقه.`);
-  loadResults();
-}
-
-function loadResults(){
-  let answers=JSON.parse(localStorage.getItem('answers')||'{}');
-  let teachers=JSON.parse(localStorage.getItem('teachers')||'{}');
-  let html='';
-  let myExams = teachers[currentUser.username].exams;
-  for(let exam in myExams){
-      if(answers[exam]){
-          for(let stu in answers[exam]){
-              html+=`<p>امتحان: ${exam}, دانش‌آموز: ${stu}, نمره: ${answers[exam][stu].score}</p>`;
-          }
-      }
-  }
-  document.getElementById('teacherResults').innerHTML=html;
-}
-
-// ===== Student =====
-function studentLogin(){
-  const u=document.getElementById('stuUser').value.trim();
-  const p=document.getElementById('stuPass').value.trim();
-  const code=document.getElementById('examCode').value.trim();
-  if(!u||!p||!code) return alert('همه موارد را وارد کنید');
-  currentUser={role:'student',username:u,password:p};
-  currentExam=code;
-  let teachers=JSON.parse(localStorage.getItem('teachers')||'{}');
-  let exam=null;
-  for(let t in teachers){
-    if(teachers[t].exams[code]){exam=teachers[t].exams[code]; break;}
-  }
-  if(!exam) return alert('کد امتحان یافت نشد');
-
-  let answers=JSON.parse(localStorage.getItem('answers')||'{}');
-  if(answers[code] && answers[code][u]){
-      return alert('شما قبلاً این امتحان را داده‌اید.');
+async function updateAll(){
+  if(timer){clearTimeout(timer); timer=null;}
+  listContainer.innerHTML='<div style="display:flex;justify-content:center;padding:28px"><div class="loader"></div></div>';
+  const rows=[];
+  for(const name of Object.keys(cities)){
+    const [lat,lon]=cities[name];
+    const temp = await fetchTemp(lat,lon);
+    rows.push({name,temp});
+    await new Promise(r=>setTimeout(r,100));
   }
 
-  startExam(exam);
+  const vals=rows.filter(r=>r.temp!==null).map(r=>r.temp);
+  const avg=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):'—';
+  document.getElementById('avg').innerText=avg;
+  document.getElementById('cityCount').innerText=rows.length;
+  document.getElementById('lastTime').innerText=new Date().toLocaleTimeString('fa-IR');
+
+  listContainer.innerHTML='';
+  const q=document.getElementById('search').value.trim().toLowerCase();
+  for(const r of rows){
+    if(q && !r.name.toLowerCase().includes(q)) continue;
+    listContainer.appendChild(makeCard(r.name,r.temp));
+    previous[r.name]=r.temp;
+  }
+
+  timer=setTimeout(updateAll,refreshSec*1000);
 }
 
-function startExam(examData){
-  document.getElementById('studentBox').classList.add('hidden');
-  document.getElementById('examBox').classList.remove('hidden');
-  renderQuestions(examData.questions);
-  timeLeft=examData.time*60;
-  timer=setInterval(()=>{
-    let m=Math.floor(timeLeft/60),s=timeLeft%60;
-    document.getElementById('timer').innerText=`زمان باقی مانده: ${m}:${s<10?'0':''}${s}`;
-    if(timeLeft<=30) document.getElementById('timer').style.background='#ff5555';
-    timeLeft--;
-    if(timeLeft<0){clearInterval(timer); finishExam(examData.questions.length);}
-  },1000);
-}
+/* رویدادها */
+document.getElementById('refresh').addEventListener('change',(e)=>{
+  refreshSec=Number(e.target.value);
+  document.getElementById('uiInterval').innerText=refreshSec;
+  if(timer){clearTimeout(timer); timer=null;}
+  updateAll();
+});
+document.getElementById('manualRefresh').addEventListener('click',()=>{if(timer){clearTimeout(timer);timer=null;}updateAll();});
+document.getElementById('search').addEventListener('input',()=>{updateAll();});
 
-function renderQuestions(questions){
-  const box=document.getElementById('questions');
-  box.innerHTML='';
-  questions.forEach((q,i)=>{
-    let html=`<div class='question'><p>${i+1}. ${q.text}</p>`;
-    q.options.forEach((o,idx)=>{
-      html+=`<label><input type='radio' name='q${i}' value='${idx}'> ${o}</label>`;
-    });
-    html+='</div>';
-    box.innerHTML+=html;
-  });
-}
-
-function finishExam(){
-  clearInterval(timer);
-  let score=0;
-  let teachers=JSON.parse(localStorage.getItem('teachers')||'{}');
-  let questions=null;
-  for(let t in teachers){if(teachers[t].exams[currentExam]){questions=teachers[t].exams[currentExam].questions; break;}}
-  if(!questions) return alert('خطا در بارگذاری سوالات');
-  questions.forEach((q,i)=>{
-    const ans=document.querySelector(`input[name='q${i}']:checked`);
-    if(ans && Number(ans.value)===q.correct) score += q.score;
-  });
-  let answers=JSON.parse(localStorage.getItem('answers')||'{}');
-  if(!answers[currentExam]) answers[currentExam]={};
-  answers[currentExam][currentUser.username]={score:score};
-  localStorage.setItem('answers',JSON.stringify(answers));
-  document.getElementById('examBox').classList.add('hidden');
-  document.getElementById('resultBox').classList.remove('hidden');
-  document.getElementById('scoreText').innerText=`نمره شما: ${score}`;
-}
-</script></body>
-    </html>
+/* شروع */
+window.addEventListener('load',updateAll);
+</script>
+</body>
+</html>
