@@ -1,237 +1,165 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>وضعیت آب و هوا ایران </title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>وضعیت آب‌وهوای ایران</title>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.min.css">
 
 <style>
-  :root{
-    --bg:#f4f8fc;
-    --card:#ffffff;
-    --muted:#6b7785;
-    --accent:#ff9800;
-    --accent-600:#fb8c00;
-    --radius:14px;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%;margin:0;font-family: Vazirmatn, "Tahoma", sans-serif;background:var(--bg);color:#0b1a2b;-webkit-font-smoothing:antialiased}
-  header{
-    background: linear-gradient(90deg,var(--accent),#ffb74d);
-    color:#fff;padding:18px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;
-    box-shadow: 0 6px 20px rgba(0,0,0,.12);
-    position: sticky; top: 0; z-index: 40;
-  }
-  header .title{font-size:18px;font-weight:700;margin:0}
-  header .subtitle{font-size:13px;opacity:.95}
-  main{max-width:980px;margin:14px auto;padding:14px}
-  .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
-  .btn{
-    background:var(--accent);color:#fff;border:0;padding:9px 12px;border-radius:10px;font-weight:600;cursor:pointer;
-    box-shadow: 0 6px 14px rgba(0,0,0,.08);
-  }
-  .btn.ghost{background:transparent;color:var(--accent);border:1px solid rgba(0,0,0,.06);box-shadow:none}
-  .select, .search{
-    background:var(--card);border-radius:10px;padding:6px 8px;border:1px solid #e9eef6;min-width:120px;
-  }
-  .search input{border:0;outline:none;padding:8px;width:220px;background:transparent;font-size:14px}
-  .row{
-    display:grid;grid-template-columns:1fr 280px;gap:14px;
-  }
-  .list{display:grid;gap:12px}
-  .card{
-    background:var(--card);border-radius:var(--radius);padding:12px;display:flex;align-items:center;gap:12px;
-    box-shadow: 0 6px 18px rgba(12,30,60,.04);
-  }
-  .card .left{flex:1}
-  .city{font-size:16px;font-weight:700;margin-bottom:4px}
-  .meta{font-size:13px;color:var(--muted)}
-  .aqi{
-    min-width:84px;text-align:center;border-radius:10px;padding:10px 8px;background:linear-gradient(180deg,#f6f8fb,#ffffff);
-    box-shadow: inset 0 -6px 18px rgba(0,0,0,.02);
-  }
-  .aqi .val{font-size:20px;font-weight:800}
-  .aqi .emoji{font-size:24px;margin-top:6px;display:block;animation: float 2s infinite ease-in-out}
-  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-  .change{font-size:13px;color:var(--muted);margin-top:6px}
-  .panel{
-    background:linear-gradient(180deg,#fff,#fbfdff);border-radius:12px;padding:12px;box-shadow:0 6px 20px rgba(20,30,60,.04);
-    height:100%;
-  }
-  .stat{display:flex;justify-content:space-between;align-items:center;padding:8px 6px}
-  .stat .label{color:var(--muted);font-size:13px}
-  .stat .value{font-weight:700;font-size:15px}
-  @media (max-width:900px){
-    .row{grid-template-columns:1fr; }
-    .controls{justify-content:space-between}
-    .search input{width:140px}
-  }
-  @media (max-width:600px){
-    .search input{width:100px}
-    header .title{font-size:16px}
-    .aqi{min-width:72px;padding:8px}
-  }
-  .loader{width:36px;height:36px;border-radius:50%;border:4px solid rgba(255,255,255,.16);border-top-color:rgba(255,255,255,.9);animation:spin 0.9s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  footer{text-align:center;padding:10px 0;color:var(--muted);font-size:13px}
+body{margin:0;font-family:Vazirmatn;background:#eef3f9}
+header{
+  background:linear-gradient(90deg,#1976d2,#42a5f5);
+  color:#fff;padding:16px;
+  display:flex;justify-content:space-between;align-items:center
+}
+.btn{
+  background:#ff9800;color:#fff;border:none;
+  padding:8px 14px;border-radius:12px;font-weight:700
+}
+main{padding:14px;max-width:1000px;margin:auto}
+.search{
+  background:#fff;border-radius:14px;
+  padding:10px 14px;margin-bottom:14px;
+  box-shadow:0 4px 14px rgba(0,0,0,.05)
+}
+.search input{border:none;outline:none;width:100%;font-size:14px}
+.list{display:grid;gap:12px}
+.card{
+  background:#fff;border-radius:18px;
+  padding:14px 16px;
+  display:flex;justify-content:space-between;align-items:center;
+  box-shadow:0 6px 18px rgba(0,0,0,.08)
+}
+.name{font-weight:800}
+.temp{text-align:center}
+.deg{font-size:20px;font-weight:900}
+.icon{font-size:26px;animation:float 2.5s infinite}
+@keyframes float{50%{transform:translateY(-6px)}}
+footer{text-align:center;padding:14px;font-size:13px;color:#666}
 </style>
 </head>
+
 <body>
+
 <header>
   <div>
-    <div class="title">🌍 وضعیت آب و هوا و دما ایران</div>
-    <div class="subtitle">آپدیت خودکار: هر <span id="uiInterval">60</span> ثانیه</div>
+    <div style="font-weight:800">🌦️ وضعیت آب‌وهوای ایران</div>
+    <div style="font-size:12px">بروزرسانی هر ۱ دقیقه</div>
   </div>
-  <div id="installRow">
-    <a href="https://eitaa.com/BGM_STUDIO" target="_blank" class="btn">کانال ما</a>
-  </div>
+  <button class="btn" onclick="openChannel()">کانال ما</button>
 </header>
 
 <main>
-  <div class="row">
-    <div>
-      <div class="controls">
-        <div class="select">
-          <select id="refresh" style="border:0;background:transparent;font-weight:700">
-            <option value="60">آپدیت: 60 ثانیه</option>
-            <option value="30">آپدیت: 30 ثانیه</option>
-            <option value="120">آپدیت: 120 ثانیه</option>
-          </select>
-        </div>
-        <div class="search">
-          <input id="search" placeholder="جستجوی شهر..." />
-        </div>
-        <button class="btn ghost" id="manualRefresh">به‌روزرسانی</button>
-      </div>
-      <div class="list card-container" id="listContainer"></div>
-    </div>
-
-    <aside class="panel">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <div style="font-weight:700">خلاصه کشور</div>
-        <div style="font-size:12px;color:var(--muted)">آخرین بروزرسانی: <span id="lastTime">—</span></div>
-      </div>
-      <div class="stat"><div class="label">میانگین دما</div><div class="value" id="avg">—</div></div>
-      <div class="stat"><div class="label">شهرها</div><div class="value" id="cityCount">—</div></div>
-    </aside>
+  <div class="search">
+    <input id="search" placeholder="جستجوی استان یا شهر...">
   </div>
+  <div id="list" class="list"></div>
 </main>
 
 <footer>ساخته شده توسط BGM STUDIO</footer>
 
 <script>
-const cities = {
+function openChannel(){
+  window.open("https://eitaa.com/BGM_STUDIO","_blank");
+}
+
+/* استان‌ها (همیشه) */
+const provinces={
   "تهران":[35.6892,51.3890],
-  "مشهد":[36.2605,59.6168],
+  "سمنان":[35.5753,53.3958],
   "اصفهان":[32.6546,51.6680],
-  "شیراز":[29.5918,52.5837],
-  "تبریز":[38.0962,46.2738],
-  "کرج":[35.8400,51.0000],
+  "فارس":[29.5918,52.5837],
+  "خراسان رضوی":[36.2605,59.6168],
+  "آذربایجان شرقی":[38.0962,46.2738],
+  "آذربایجان غربی":[37.5498,45.0786],
+  "اردبیل":[38.2498,48.2933],
+  "گیلان":[37.2808,49.5832],
+  "مازندران":[36.5659,53.0586],
+  "گلستان":[36.8456,54.4390],
   "قم":[34.6401,50.8764],
-  "اهواز":[31.3183,48.6706],
+  "مرکزی":[34.0917,49.6892],
+  "قزوین":[36.0881,49.8547],
+  "زنجان":[36.6769,48.4963],
+  "البرز":[35.8327,50.9915],
   "کرمان":[30.2839,57.0834],
   "یزد":[31.8974,54.3569],
-  "سمنان":[35.5753,53.3958],
-  "رشت":[37.2808,49.5832],
-  "ارومیه":[37.5483,45.0672],
-  "اردبیل":[38.2498,48.2933],
-  "زاهدان":[29.4963,60.8629],
-  "بندرعباس":[27.1865,56.2808]
+  "خوزستان":[31.3183,48.6706],
+  "بوشهر":[28.9234,50.8203],
+  "هرمزگان":[27.1832,56.2666],
+  "سیستان و بلوچستان":[29.4963,60.8629],
+  "کردستان":[35.3219,46.9862],
+  "کرمانشاه":[34.3142,47.0650],
+  "ایلام":[33.6374,46.4227],
+  "همدان":[34.7983,48.5146],
+  "لرستان":[33.4878,48.3558],
+  "چهارمحال و بختیاری":[31.9614,50.8456],
+  "کهگیلویه و بویراحمد":[30.6682,51.5870],
+  "خراسان شمالی":[37.4710,57.1013],
+  "خراسان جنوبی":[32.8649,59.2262]
 };
 
-let refreshSec = Number(document.getElementById('refresh').value) || 60;
-let timer = null;
-const listContainer = document.getElementById('listContainer');
-let previous = {};
-const apiBase = "https://api.open-meteo.com/v1/forecast";
+/* شهرها (فقط با جستجو) */
+const cities={
+  "مشهد":[36.2605,59.6168],
+  "شیراز":[29.5918,52.5837],
+  "تبریز":[38.0962,46.2738],
+  "رشت":[37.2808,49.5832],
+  "اهواز":[31.3183,48.6706],
+  "کرج":[35.8327,50.9915]
+};
 
-/* تعیین آیکون هوشمند */
-function weatherEmoji(temp){
-  if(temp<=0) return "❄️";
-  if(temp<=10) return "🌬️";
-  if(temp<=20) return "☁️";
-  if(temp<=30) return "🌤️";
-  return "🌞";
+function icon(code,temp){
+  if(code>=71) return "❄️";
+  if(code>=51) return "🌧️";
+  if(code>=3) return "☁️";
+  if(temp<10) return "🌤️";
+  return "☀️";
 }
 
-function makeCard(name,temp){
-  const card = document.createElement('div');
-  card.className='card';
-  const left=document.createElement('div');
-  left.className='left';
-  const city=document.createElement('div');
-  city.className='city';
-  city.innerText=name;
-  const meta=document.createElement('div');
-  meta.className='meta';
-  meta.innerText='مختصات: '+(cities[name]?cities[name].join(', '):'—');
-  left.appendChild(city);
-  left.appendChild(meta);
-  const box=document.createElement('div');
-  box.className='aqi';
-  const val=document.createElement('div');
-  val.className='val';
-  val.innerText=temp===null?'نامعتبر':temp+'°C';
-  const emoji=document.createElement('div');
-  emoji.className='emoji';
-  emoji.innerText=weatherEmoji(temp);
-  box.appendChild(val);
-  box.appendChild(emoji);
-  card.appendChild(left);
-  card.appendChild(box);
-  return card;
+async function getWeather(lat,lon){
+  const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+  const j=await r.json();
+  return j.current_weather;
 }
 
-async function fetchTemp(lat,lon){
-  try{
-    const res = await fetch(`${apiBase}?latitude=${lat}&longitude=${lon}&current_weather=true`);
-    const j = await res.json();
-    return j?.current_weather?.temperature ?? null;
-  }catch(e){return null;}
-}
+async function render(){
+  const q=document.getElementById("search").value.trim();
+  const list=document.getElementById("list");
+  list.innerHTML="";
 
-async function updateAll(){
-  if(timer){clearTimeout(timer); timer=null;}
-  listContainer.innerHTML='<div style="display:flex;justify-content:center;padding:28px"><div class="loader"></div></div>';
-  const rows=[];
-  for(const name of Object.keys(cities)){
-    const [lat,lon]=cities[name];
-    const temp = await fetchTemp(lat,lon);
-    rows.push({name,temp});
-    await new Promise(r=>setTimeout(r,100));
+  for(const [n,l] of Object.entries(provinces)){
+    if(q && !n.includes(q)) continue;
+    const w=await getWeather(l[0],l[1]);
+    list.innerHTML+=card(n,w);
   }
 
-  const vals=rows.filter(r=>r.temp!==null).map(r=>r.temp);
-  const avg=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):'—';
-  document.getElementById('avg').innerText=avg;
-  document.getElementById('cityCount').innerText=rows.length;
-  document.getElementById('lastTime').innerText=new Date().toLocaleTimeString('fa-IR');
-
-  listContainer.innerHTML='';
-  const q=document.getElementById('search').value.trim().toLowerCase();
-  for(const r of rows){
-    if(q && !r.name.toLowerCase().includes(q)) continue;
-    listContainer.appendChild(makeCard(r.name,r.temp));
-    previous[r.name]=r.temp;
+  if(q){
+    for(const [n,l] of Object.entries(cities)){
+      if(n.includes(q)){
+        const w=await getWeather(l[0],l[1]);
+        list.innerHTML+=card(n,w);
+      }
+    }
   }
-
-  timer=setTimeout(updateAll,refreshSec*1000);
 }
 
-/* رویدادها */
-document.getElementById('refresh').addEventListener('change',(e)=>{
-  refreshSec=Number(e.target.value);
-  document.getElementById('uiInterval').innerText=refreshSec;
-  if(timer){clearTimeout(timer); timer=null;}
-  updateAll();
-});
-document.getElementById('manualRefresh').addEventListener('click',()=>{if(timer){clearTimeout(timer);timer=null;}updateAll();});
-document.getElementById('search').addEventListener('input',()=>{updateAll();});
+function card(name,w){
+  return `
+  <div class="card">
+    <div class="name">${name}</div>
+    <div class="temp">
+      <div class="deg">${Math.round(w.temperature)}°C</div>
+      <div class="icon">${icon(w.weathercode,w.temperature)}</div>
+    </div>
+  </div>`;
+}
 
-/* شروع */
-window.addEventListener('load',updateAll);
+document.getElementById("search").addEventListener("input",render);
+render();
+setInterval(render,60000);
 </script>
+
 </body>
 </html>
