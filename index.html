@@ -12,11 +12,6 @@ body{margin:0;font-family:Vazirmatn;background:#eef3f9}
 header{
   background:linear-gradient(90deg,#1976d2,#42a5f5);
   color:#fff;padding:16px;
-  display:flex;justify-content:space-between;align-items:center
-}
-.btn{
-  background:#ff9800;color:#fff;border:none;
-  padding:8px 14px;border-radius:12px;font-weight:700
 }
 main{padding:14px;max-width:1000px;margin:auto}
 .search{
@@ -44,10 +39,8 @@ footer{text-align:center;padding:14px;font-size:13px;color:#666}
 <body>
 
 <header>
-  <div>
-    <div style="font-weight:800">🌦️ وضعیت آب‌وهوای ایران</div>
-    <div style="font-size:12px">بروزرسانی هر ۱ دقیقه</div>
-  </div>
+  <div style="font-weight:800">🌦️ وضعیت آب‌وهوای ایران</div>
+  <div style="font-size:12px">بروزرسانی هر ۱ دقیقه</div>
 </header>
 
 <main>
@@ -60,11 +53,7 @@ footer{text-align:center;padding:14px;font-size:13px;color:#666}
 <footer>ساخته شده توسط BGM STUDIO</footer>
 
 <script>
-function openChannel(){
-  window.open("https://eitaa.com/BGM_STUDIO","_blank");
-}
-
-/* استان‌ها (همیشه) */
+/* استان‌ها (همیشه نمایش) */
 const provinces={
   "تهران":[35.6892,51.3890],
   "سمنان":[35.5753,53.3958],
@@ -123,6 +112,17 @@ async function getWeather(lat,lon){
   return j.current_weather;
 }
 
+function card(name,w){
+  return `
+  <div class="card">
+    <div class="name">${name}</div>
+    <div class="temp">
+      <div class="deg">${Math.round(w.temperature)}°C</div>
+      <div class="icon">${icon(w.weathercode,w.temperature)}</div>
+    </div>
+  </div>`;
+}
+
 async function render(){
   const q=document.getElementById("search").value.trim();
   const list=document.getElementById("list");
@@ -142,17 +142,6 @@ async function render(){
       }
     }
   }
-}
-
-function card(name,w){
-  return `
-  <div class="card">
-    <div class="name">${name}</div>
-    <div class="temp">
-      <div class="deg">${Math.round(w.temperature)}°C</div>
-      <div class="icon">${icon(w.weathercode,w.temperature)}</div>
-    </div>
-  </div>`;
 }
 
 document.getElementById("search").addEventListener("input",render);
