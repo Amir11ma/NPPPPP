@@ -1,157 +1,78 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>وضعیت آب‌وهوای استان‌های ایران</title>
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/yekan-font@v1.0.0/dist/font-face.css">
-
-<style>
-body{margin:0;font-family:Yekan,Tahoma;background:#eef3f9}
-header{
-  background:linear-gradient(90deg,#1976d2,#42a5f5);
-  color:#fff;padding:16px
-}
-main{padding:14px;max-width:1000px;margin:auto}
-.search{
-  background:#fff;border-radius:14px;
-  padding:10px 14px;margin-bottom:14px;
-  box-shadow:0 4px 14px rgba(0,0,0,.05)
-}
-.search input{border:none;outline:none;width:100%;font-size:14px}
-.list{display:grid;gap:12px}
-.card{
-  border-radius:18px;padding:14px 16px;
-  display:flex;justify-content:space-between;align-items:center;
-  color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.12)
-}
-.name{font-weight:800}
-.temp{text-align:center}
-.deg{font-size:20px;font-weight:900}
-.icon{font-size:26px;animation:float 2.5s infinite}
-@keyframes float{50%{transform:translateY(-6px)}}
-footer{text-align:center;padding:14px;font-size:13px;color:#666}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💰 قیمت لحظه‌ای ارزها</title>
+    <style>
+        /* استایل‌ها همانند قبل */
+        :root { --primary: #2563eb; --success: #10b981; --danger: #ef4444; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Vazirmatn', sans-serif; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .card { background: rgba(255, 255, 255, 0.95); border-radius: 20px; padding: 30px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
+        h1 { color: var(--primary); font-size: 1.8rem; text-align: center; margin-bottom: 10px; }
+        .price-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; margin-top: 20px; }
+        .price-card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); border-right: 4px solid var(--primary); }
+        .price-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+        .currency-name { font-weight: 700; font-size: 1.2rem; color: #1f2937; }
+        .price-value { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 5px; }
+        @media (max-width: 768px) { .price-grid { grid-template-columns: 1fr; } }
+    </style>
 </head>
-
 <body>
-<header>
-  <div style="font-weight:800">🌦️ وضعیت آب‌وهوای استان‌های ایران</div>
-  <div style="font-size:12px">بروزرسانی خودکار هر ۱ دقیقه</div>
-</header>
+    <div class="container">
+        <div class="card">
+            <h1>💰 قیمت لحظه‌ای ارزها</h1>
+            <div id="pricesContainer">در حال دریافت...</div>
+        </div>
+    </div>
 
-<main>
-  <div class="search">
-    <input id="search" placeholder="جستجوی استان یا شهر...">
-  </div>
-  <div id="list" class="list"></div>
-</main>
-
-<footer>ساخته شده توسط BGM STUDIO</footer>
-
-<script>
-/* ===== 31 استان کامل ===== */
-const provinces={
- "تهران":[35.6892,51.3890],
- "البرز":[35.8327,50.9915],
- "قم":[34.6401,50.8764],
- "قزوین":[36.0881,49.8547],
- "زنجان":[36.6769,48.4963],
- "سمنان":[35.5753,53.3958],
- "مرکزی":[34.0917,49.6892],
- "اصفهان":[32.6546,51.6680],
- "یزد":[31.8974,54.3569],
- "کرمان":[30.2839,57.0834],
- "خراسان رضوی":[36.2605,59.6168],
- "خراسان شمالی":[37.4710,57.1013],
- "خراسان جنوبی":[32.8649,59.2262],
- "فارس":[29.5918,52.5837],
- "بوشهر":[28.9234,50.8203],
- "هرمزگان":[27.1832,56.2666],
- "سیستان و بلوچستان":[29.4963,60.8629],
- "خوزستان":[31.3183,48.6706],
- "کهگیلویه و بویراحمد":[30.6682,51.5870],
- "چهارمحال و بختیاری":[31.9614,50.8456],
- "لرستان":[33.4878,48.3558],
- "همدان":[34.7983,48.5146],
- "ایلام":[33.6374,46.4227],
- "کرمانشاه":[34.3142,47.0650],
- "کردستان":[35.3219,46.9862],
- "آذربایجان شرقی":[38.0962,46.2738],
- "آذربایجان غربی":[37.5498,45.0786],
- "اردبیل":[38.2498,48.2933],
- "گیلان":[37.2808,49.5832],
- "مازندران":[36.5659,53.0586],
- "گلستان":[36.8456,54.4390]
-};
-
-/* شهرها فقط با جستجو */
-const cities={
- "مشهد":[36.2605,59.6168],
- "شیراز":[29.5918,52.5837],
- "تبریز":[38.0962,46.2738],
- "رشت":[37.2808,49.5832],
- "اهواز":[31.3183,48.6706],
- "کرج":[35.8327,50.9915]
-};
-
-function icon(code,temp){
- if(code>=71) return "❄️";
- if(code>=51) return "🌧️";
- if(code>=3) return "☁️";
- if(temp<10) return "🌤️";
- return "☀️";
-}
-
-function tempColor(t){
- if(t<=5) return "linear-gradient(135deg,#2196f3,#64b5f6)";
- if(t<=20) return "linear-gradient(135deg,#2e7d32,#66bb6a)";
- return "linear-gradient(135deg,#f57c00,#ffb74d)";
-}
-
-async function getWeather(lat,lon){
- const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
- const j=await r.json();
- return j.current_weather;
-}
-
-function card(name,w){
- return `
- <div class="card" style="background:${tempColor(w.temperature)}">
-  <div class="name">${name}</div>
-  <div class="temp">
-    <div class="deg">${Math.round(w.temperature)}°C</div>
-    <div class="icon">${icon(w.weathercode,w.temperature)}</div>
-  </div>
- </div>`;
-}
-
-async function render(){
- const q=document.getElementById("search").value.trim();
- const list=document.getElementById("list");
- list.innerHTML="";
-
- for(const [n,l] of Object.entries(provinces)){
-   if(q && !n.includes(q)) continue;
-   const w=await getWeather(l[0],l[1]);
-   list.innerHTML+=card(n,w);
- }
-
- if(q){
-  for(const [n,l] of Object.entries(cities)){
-   if(n.includes(q)){
-    const w=await getWeather(l[0],l[1]);
-    list.innerHTML+=card(n,w);
-   }
-  }
- }
-}
-
-document.getElementById("search").addEventListener("input",render);
-render();
-setInterval(render,60000);
-</script>
-
+    <script>
+        async function fetchPrices() {
+            try {
+                // استفاده از CORS Proxy
+                const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                const targetUrl = 'https://v3.api-free.ir/arz/?limit=10';
+                const apiUrl = proxyUrl + encodeURIComponent(targetUrl);
+                
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                
+                if (data.ok && data.result) {
+                    displayCurrencies(data.result);
+                } else {
+                    document.getElementById('pricesContainer').innerHTML = 
+                        '<p style="color: #ef4444; text-align: center;">خطا در دریافت داده‌ها</p>';
+                }
+            } catch (error) {
+                document.getElementById('pricesContainer').innerHTML = 
+                    `<p style="color: #ef4444; text-align: center;">خطا: ${error.message}</p>`;
+            }
+        }
+        
+        function displayCurrencies(currencies) {
+            let html = '<div class="price-grid">';
+            currencies.forEach(currency => {
+                html += `
+                    <div class="price-card">
+                        <div class="price-header">
+                            <div class="currency-name">${currency.name}</div>
+                            <div>💱</div>
+                        </div>
+                        <div class="price-value">${currency.price} ریال</div>
+                        <small>هر واحد</small>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            document.getElementById('pricesContainer').innerHTML = html;
+        }
+        
+        // اجرای برنامه
+        fetchPrices();
+        // بروزرسانی هر 1 دقیقه
+        setInterval(fetchPrices, 60000);
+    </script>
 </body>
 </html>
