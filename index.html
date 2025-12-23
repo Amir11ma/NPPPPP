@@ -1,78 +1,214 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💰 قیمت لحظه‌ای ارزها</title>
-    <style>
-        /* استایل‌ها همانند قبل */
-        :root { --primary: #2563eb; --success: #10b981; --danger: #ef4444; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Vazirmatn', sans-serif; }
-        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; }
-        .card { background: rgba(255, 255, 255, 0.95); border-radius: 20px; padding: 30px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
-        h1 { color: var(--primary); font-size: 1.8rem; text-align: center; margin-bottom: 10px; }
-        .price-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; margin-top: 20px; }
-        .price-card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); border-right: 4px solid var(--primary); }
-        .price-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
-        .currency-name { font-weight: 700; font-size: 1.2rem; color: #1f2937; }
-        .price-value { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 5px; }
-        @media (max-width: 768px) { .price-grid { grid-template-columns: 1fr; } }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FarsiGPT</title>
+<style>
+body{
+  margin:0;
+  font-family:sans-serif;
+  background:#f2f4f7;
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+}
+header{
+  background:#0d6efd;
+  color:white;
+  padding:15px;
+  text-align:center;
+  font-weight:bold;
+  font-size:20px;
+}
+#chat{
+  flex:1;
+  overflow-y:auto;
+  padding:10px;
+  scroll-behavior: smooth;
+}
+.msg{
+  max-width:80%;
+  margin:12px 0;
+  padding:12px 16px;
+  border-radius:12px;
+  line-height:1.6;
+  font-size:15px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+.user{
+  background:#0d6efd;
+  color:white;
+  margin-left:auto;
+  border-bottom-right-radius:0;
+}
+.bot{
+  background:white;
+  color:black;
+  margin-right:auto;
+  border-bottom-left-radius:0;
+}
+.timeStamp{
+  font-size:10px;
+  color:#888;
+  margin-bottom:4px;
+  text-align:right;
+  width:100%;
+}
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #0d6efd;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  display:inline-block;
+  margin-left:8px;
+  vertical-align:middle;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+footer{
+  display:flex;
+  padding:10px;
+  background:#fff;
+  border-top:1px solid #ddd;
+  position:fixed;
+  bottom:16px;
+  left:0;
+  right:0;
+}
+input{
+  flex:1;
+  padding:10px;
+  font-size:15px;
+  border:1px solid #ccc;
+  border-radius:8px;
+  outline:none;
+}
+button{
+  margin-left:8px;
+  padding:10px 16px;
+  background:#0d6efd;
+  color:white;
+  border:none;
+  border-radius:8px;
+  font-size:15px;
+}
+#loadingScreen{
+  position:fixed;
+  top:0; left:0;
+  width:100%;
+  height:100%;
+  background:#0d6efd;
+  color:white;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  font-size:24px;
+  z-index:1000;
+}
+#loadingScreen .loader{
+  margin-top:20px;
+  width:40px;
+  height:40px;
+  border-width:5px;
+}
+.footerText{
+  text-align:center;
+  font-size:12px;
+  color:#888;
+  margin-top:5px;
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <h1>💰 قیمت لحظه‌ای ارزها</h1>
-            <div id="pricesContainer">در حال دریافت...</div>
-        </div>
-    </div>
 
-    <script>
-        async function fetchPrices() {
-            try {
-                // استفاده از CORS Proxy
-                const proxyUrl = 'https://api.allorigins.win/raw?url=';
-                const targetUrl = 'https://v3.api-free.ir/arz/?limit=10';
-                const apiUrl = proxyUrl + encodeURIComponent(targetUrl);
-                
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-                
-                if (data.ok && data.result) {
-                    displayCurrencies(data.result);
-                } else {
-                    document.getElementById('pricesContainer').innerHTML = 
-                        '<p style="color: #ef4444; text-align: center;">خطا در دریافت داده‌ها</p>';
-                }
-            } catch (error) {
-                document.getElementById('pricesContainer').innerHTML = 
-                    `<p style="color: #ef4444; text-align: center;">خطا: ${error.message}</p>`;
-            }
-        }
-        
-        function displayCurrencies(currencies) {
-            let html = '<div class="price-grid">';
-            currencies.forEach(currency => {
-                html += `
-                    <div class="price-card">
-                        <div class="price-header">
-                            <div class="currency-name">${currency.name}</div>
-                            <div>💱</div>
-                        </div>
-                        <div class="price-value">${currency.price} ریال</div>
-                        <small>هر واحد</small>
-                    </div>
-                `;
-            });
-            html += '</div>';
-            document.getElementById('pricesContainer').innerHTML = html;
-        }
-        
-        // اجرای برنامه
-        fetchPrices();
-        // بروزرسانی هر 1 دقیقه
-        setInterval(fetchPrices, 60000);
-    </script>
+<div id="loadingScreen">
+  FarsiGPT در حال بارگذاری...
+  <div class="loader"></div>
+</div>
+
+<header>🤖 FarsiGPT</header>
+
+<div id="chat"></div>
+
+<footer>
+  <input id="text" placeholder="پیامت رو بنویس…">
+  <button onclick="send()">ارسال</button>
+</footer>
+
+<div class="footerText">ساخته شده توسط BGM STUDIO</div>
+
+<script>
+const chat = document.getElementById("chat");
+const loadingScreen = document.getElementById("loadingScreen");
+
+window.addEventListener("load", () => {
+  setTimeout(() => { loadingScreen.style.display = "none"; }, 2000);
+});
+
+function getTime(){
+  const now = new Date();
+  return now.getHours()+":"+String(now.getMinutes()).padStart(2,'0');
+}
+
+function addMsg(text, cls){
+  const div = document.createElement("div");
+  div.className = "msg " + cls;
+
+  const time = document.createElement("div");
+  time.className="timeStamp";
+  time.innerText = getTime();
+  div.appendChild(time);
+
+  const textDiv = document.createElement("div");
+  textDiv.style.marginTop = "4px";
+  textDiv.style.whiteSpace = "pre-wrap";
+  textDiv.innerText = text;
+
+  div.appendChild(textDiv);
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+async function send(){
+  const input = document.getElementById("text");
+  const text = input.value.trim();
+  if(!text) return;
+
+  addMsg(text,"user");
+  input.value="";
+
+  const botMsg = document.createElement("div");
+  botMsg.className="msg bot";
+  const loaderSpan = document.createElement("span");
+  loaderSpan.className="loader";
+  botMsg.appendChild(loaderSpan);
+  botMsg.appendChild(document.createTextNode(" در حال دریافت پاسخ..."));
+  chat.appendChild(botMsg);
+  chat.scrollTop = chat.scrollHeight;
+
+  try{
+    const res = await fetch(
+      "https://gpt4.api-sina-free.workers.dev/gpt4?text=" 
+      + encodeURIComponent(text)
+    );
+    const data = await res.json();
+
+    botMsg.remove();
+    addMsg(data.result || "❌ پاسخی دریافت نشد","bot");
+
+  }catch(e){
+    botMsg.remove();
+    addMsg("❌ خطا در ارتباط با سرور","bot");
+  }
+}
+</script>
+
 </body>
 </html>
